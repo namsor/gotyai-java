@@ -1,7 +1,0 @@
-com\namsor\oss\classify\bayes\NaiveBayesClassifierMapImplTest.class
-com\namsor\oss\classify\bayes\NaiveBayesClassifierRocksDBLaplacedImplTest.class
-com\namsor\oss\classify\bayes\NaiveBayesClassifierRocksDBImplTest.class
-com\namsor\oss\classify\bayes\NaiveBayesClassifierMapLaplacedLogImplTest1.class
-com\namsor\oss\classify\bayes\NaiveBayesClassifierMapLaplacedImplTest.class
-com\namsor\oss\classify\bayes\NaiveBayesClassifierRocksDBLaplacedLogImplTest.class
-com\namsor\oss\classify\bayes\NaiveBayesExplainerImplTest.class
