@@ -18,7 +18,7 @@ public abstract class AbstractNaiveBayesClassifierRocksDBImpl extends AbstractNa
 
     private final String rootPathWritable;
     private final RocksDB db;
-    private final int ROCKSDB_MaxBackgroundFlushes = 4;
+    //private final int ROCKSDB_MaxBackgroundFlushes = 4;
 
     /**
      * Create a persistent Naive Bayes Classifier using RocksDB
@@ -33,7 +33,7 @@ public abstract class AbstractNaiveBayesClassifierRocksDBImpl extends AbstractNa
         this.rootPathWritable = rootPathWritable;
         Options options = new Options();
         options.setCreateIfMissing(true);
-        options.setMaxBackgroundFlushes(ROCKSDB_MaxBackgroundFlushes);
+        //options.setMaxBackgroundFlushes(ROCKSDB_MaxBackgroundFlushes);
         try {
             File rootPathWritableFile = new File(rootPathWritable);
             if (rootPathWritableFile.exists() && rootPathWritableFile.isDirectory()) {

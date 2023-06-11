@@ -1,17 +1,11 @@
 package com.namsor.oss.samples;
 
 import com.namsor.oss.classify.bayes.ClassifyException;
-import com.namsor.oss.classify.bayes.ClassifyException;
 import com.namsor.oss.classify.bayes.inmem.NaiveBayesClassifierMapImpl;
-import com.namsor.oss.classify.bayes.inmem.NaiveBayesClassifierMapImpl;
-import java.io.IOException;
-import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import com.namsor.oss.classify.bayes.IClassProbability;
-import com.namsor.oss.classify.bayes.IClassProbability;
 import com.namsor.oss.classify.bayes.IClassification;
 import com.namsor.oss.classify.bayes.IClassificationExplained;
 import com.namsor.oss.classify.bayes.NaiveBayesExplainerImpl;

@@ -1,6 +1,5 @@
 package com.namsor.oss.classify.bayes;
 
-import com.namsor.oss.classify.bayes.IClassification;
 import java.util.Map;
 
 /**

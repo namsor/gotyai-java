@@ -3,7 +3,6 @@ package com.namsor.oss.samples;
 import com.namsor.oss.classify.bayes.ClassifyException;
 import com.namsor.oss.classify.bayes.inmem.NaiveBayesClassifierMapLaplacedImpl;
 import com.namsor.oss.classify.bayes.PersistentClassifierException;
-import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
