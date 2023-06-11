@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="3" failures="0" name="com.namsor.oss.classify.bayes.NaiveBayesClassifierMapImplTest" time="0.007" errors="0" skipped="0">
+<testsuite tests="3" failures="0" name="com.namsor.oss.classify.bayes.NaiveBayesClassifierMapImplTest" time="0.005" errors="0" skipped="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="java.vm.version" value="11.0.13+10-LTS-370"/>
@@ -14,7 +14,6 @@
     <property name="user.script" value=""/>
     <property name="user.country" value="US"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
-    <property name="test" value="com.namsor.oss.classify.bayes.**.*Test"/>
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
     <property name="user.dir" value="C:\git\gotyai-java"/>
     <property name="java.vm.compressedOopsMode" value="Zero based"/>
@@ -47,7 +46,7 @@
     <property name="java.class.path" value="C:\Program Files\NetBeans-12.5\netbeans\java\maven\bin\..\boot\plexus-classworlds-2.6.0.jar"/>
     <property name="java.vm.specification.version" value="11"/>
     <property name="sun.arch.data.model" value="64"/>
-    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher -Dtest=com.namsor.oss.classify.bayes.**.*Test -Dmaven.ext.class.path=C:\Program Files\NetBeans-12.5\netbeans\java\maven-nblib\netbeans-eventspy.jar -Dfile.encoding=UTF-8 surefire:test"/>
+    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher -Dmaven.ext.class.path=C:\Program Files\NetBeans-12.5\netbeans\java\maven-nblib\netbeans-eventspy.jar -Dfile.encoding=UTF-8 clean install"/>
     <property name="java.home" value="C:\Program Files\Java\jdk-11.0.13"/>
     <property name="user.language" value="en"/>
     <property name="java.specification.vendor" value="Oracle Corporation"/>
@@ -65,7 +64,7 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase classname="com.namsor.oss.classify.bayes.NaiveBayesClassifierMapImplTest" name="com.namsor.oss.classify.bayes.NaiveBayesClassifierMapImplTest.testLearnClassifySample2" time="0.007"/>
+  <testcase classname="com.namsor.oss.classify.bayes.NaiveBayesClassifierMapImplTest" name="com.namsor.oss.classify.bayes.NaiveBayesClassifierMapImplTest.testLearnClassifySample2" time="0.004"/>
   <testcase classname="com.namsor.oss.classify.bayes.NaiveBayesClassifierMapImplTest" name="com.namsor.oss.classify.bayes.NaiveBayesClassifierMapImplTest.testLearnClassifySample1" time="0"/>
-  <testcase classname="com.namsor.oss.classify.bayes.NaiveBayesClassifierMapImplTest" name="com.namsor.oss.classify.bayes.NaiveBayesClassifierMapImplTest.testLearnClassifySample3" time="0"/>
+  <testcase classname="com.namsor.oss.classify.bayes.NaiveBayesClassifierMapImplTest" name="com.namsor.oss.classify.bayes.NaiveBayesClassifierMapImplTest.testLearnClassifySample3" time="0.001"/>
 </testsuite>
