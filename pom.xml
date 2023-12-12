@@ -53,6 +53,16 @@
             <artifactId>rocksdbjni</artifactId>
             <version>8.1.1.1</version>
         </dependency>
+		<dependency>
+			  <groupId>org.graalvm.js</groupId>
+			  <artifactId>js</artifactId>
+			  <version>22.3.1</version>
+		</dependency>
+		<dependency>
+		  <groupId>org.graalvm.js</groupId>
+		  <artifactId>js-scriptengine</artifactId>
+		  <version>22.3.1</version>
+		</dependency>		
         <!--dependency>
             <groupId>io.github.speedb-io</groupId>
             <artifactId>speedbjni</artifactId>
