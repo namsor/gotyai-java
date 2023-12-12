@@ -67,7 +67,7 @@ public class NaiveBayesExplainerImpl extends AbstractNaiveBayesImpl implements I
                     if (classification.isLaplaceSmoothed()) {
                         double basicProbability = (categoryFeatureCount == 0 ? 0 : 1d * (categoryFeatureValueCount + classification.getLaplaceSmoothingAlpha()) / (categoryFeatureCount + featureCountValueTypes * classification.getLaplaceSmoothingAlpha()));
                         if (categoryFeatureCount == 0) {
-                            formula.append(pathCategoryFeatureKey);
+                            formula.append(safeStr(pathCategoryFeatureKey));
                             algebraicExpression.append("0");
                         } else {
                             formula.append("(" + safeStr( pathCategoryFeatureKeyValue ) + " + alpha)/(" + safeStr( pathCategoryFeatureKey ) + " + ( " + safeStr( pathFeatureKeyCountValueTypes ) + " * alpha ))");
