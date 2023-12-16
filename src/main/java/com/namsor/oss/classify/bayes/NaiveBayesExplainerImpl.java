@@ -1,6 +1,13 @@
 
 package com.namsor.oss.classify.bayes;
 
+import static com.namsor.oss.classify.bayes.AbstractNaiveBayesImpl.pathCategory;
+import static com.namsor.oss.classify.bayes.AbstractNaiveBayesImpl.pathCategoryFeatureKey;
+import static com.namsor.oss.classify.bayes.AbstractNaiveBayesImpl.pathCategoryFeatureKeyValue;
+import static com.namsor.oss.classify.bayes.AbstractNaiveBayesImpl.pathFeatureKey;
+import static com.namsor.oss.classify.bayes.AbstractNaiveBayesImpl.pathFeatureKeyCountValueTypes;
+import static com.namsor.oss.classify.bayes.AbstractNaiveBayesImpl.pathGlobal;
+import static com.namsor.oss.classify.bayes.AbstractNaiveBayesImpl.pathGlobalCountCategories;
 import java.io.StringWriter;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -51,7 +58,8 @@ public class NaiveBayesExplainerImpl extends AbstractNaiveBayesImpl implements I
             String category = classification.getClassProbabilities()[i].getCategory();
             String pathCategory = pathCategory(category);
             long categoryCount = (classification.getExplanationData().containsKey(pathCategory) ? classification.getExplanationData().get(pathCategory) : 0);
-            double product = 1.0d;
+            // use logProduct, or product
+            double product = (classification.isLogProductVariant() ? 0.0d : 1.0d);
             int j=0;
             for (Map.Entry<String, String> feature : classification.getFeatures().entrySet()) {
                 featureNameAndValues[i][j] = feature.getKey()+"="+feature.getValue();
@@ -64,7 +72,21 @@ public class NaiveBayesExplainerImpl extends AbstractNaiveBayesImpl implements I
                     long featureCountValueTypes = (classification.getExplanationData().containsKey(pathFeatureKeyCountValueTypes) ? classification.getExplanationData().get(pathFeatureKeyCountValueTypes) : 0);
                     String pathCategoryFeatureKeyValue = pathCategoryFeatureKeyValue(category, feature.getKey(), feature.getValue());
                     long categoryFeatureValueCount = (classification.getExplanationData().containsKey(pathCategoryFeatureKeyValue) ? classification.getExplanationData().get(pathCategoryFeatureKeyValue) : 0);                    
-                    if (classification.isLaplaceSmoothed()) {
+                    if (classification.isLaplaceSmoothed() && classification.isLogProductVariant()) {
+                        double basicProbability = (categoryFeatureCount == 0 ? 0 : 0d + Math.log(categoryFeatureValueCount + classification.getLaplaceSmoothingAlpha()) - Math.log(categoryFeatureCount + featureCountValueTypes * classification.getLaplaceSmoothingAlpha()));
+                        if (categoryFeatureCount == 0) {
+                            formula.append(safeStr(pathCategoryFeatureKey));
+                            // intuition : this is the bug
+                            algebraicExpression.append("0");
+                        } else {
+                            formula.append("math.log(" + safeStr( pathCategoryFeatureKeyValue ) + " + alpha)-math.log(" + safeStr( pathCategoryFeatureKey ) + " + ( " + safeStr( pathFeatureKeyCountValueTypes ) + " * alpha ))");
+                            algebraicExpression.append("math.log(" + categoryFeatureValueCount + " + " + classification.getLaplaceSmoothingAlpha() + " )-math.log(" + categoryFeatureCount + " + ( " + featureCountValueTypes + " * " + classification.getLaplaceSmoothingAlpha() + " ))");
+                        }
+                        product += basicProbability;
+                        basicProbabilities[i][j]=basicProbability;
+                        formula.append(" + ");
+                        algebraicExpression.append(" + ");
+                    } else if (classification.isLaplaceSmoothed() && ! classification.isLogProductVariant()) {
                         double basicProbability = (categoryFeatureCount == 0 ? 0 : 1d * (categoryFeatureValueCount + classification.getLaplaceSmoothingAlpha()) / (categoryFeatureCount + featureCountValueTypes * classification.getLaplaceSmoothingAlpha()));
                         if (categoryFeatureCount == 0) {
                             formula.append(safeStr(pathCategoryFeatureKey));
@@ -74,7 +96,9 @@ public class NaiveBayesExplainerImpl extends AbstractNaiveBayesImpl implements I
                             algebraicExpression.append("(" + categoryFeatureValueCount + " + " + classification.getLaplaceSmoothingAlpha() + " )/(" + categoryFeatureCount + " + ( " + featureCountValueTypes + " * " + classification.getLaplaceSmoothingAlpha() + " ))");
                         }
                         product *= basicProbability;
-                        basicProbabilities[i][j]=basicProbability;                        
+                        basicProbabilities[i][j]=basicProbability;
+                        formula.append(" * ");
+                        algebraicExpression.append(" * ");
                     } else {
                         double basicProbability = (categoryFeatureCount == 0 ? 0 : 1d * categoryFeatureValueCount / categoryFeatureCount);
                         if (categoryFeatureCount == 0) {
@@ -86,19 +110,33 @@ public class NaiveBayesExplainerImpl extends AbstractNaiveBayesImpl implements I
                         }
                         product *= basicProbability;
                         basicProbabilities[i][j]=basicProbability;
+                        formula.append(" * ");
+                        algebraicExpression.append(" * ");
                     }
-                    formula.append(" * ");
-                    algebraicExpression.append(" * ");
                 }
                 j++;
             }
-            formula.append("1 ");
-            algebraicExpression.append("1 ");
-            if (classification.isLaplaceSmoothed() && classification.isLaplaceSmoothedVariant()) {
+            if (classification.isLaplaceSmoothed() && classification.isLaplaceSmoothedVariant() && classification.isLogProductVariant()) {
+                formula.append("0 ");
+                algebraicExpression.append("0 ");
+                likelyhood[i] = Math.exp( 0d + Math.log(categoryCount + classification.getLaplaceSmoothingAlpha()) - Math.log((globalCount + globalCountCategories * classification.getLaplaceSmoothingAlpha())) + product );
+                formulae[i] = "math.exp((math.log(" + safeStr(pathCategory) + " + alpha) - math.log(" + safeStr(pathGlobal) + " + (" + safeStr(pathGlobalCountCategories) + " * alpha))) + (" + formula.toString() + "))";
+                algebraicExpressions[i] = "math.exp((math.log(" + categoryCount + " + " + classification.getLaplaceSmoothingAlpha() + ") - math.log(" + globalCount + " + (" + globalCountCategories + " * " + classification.getLaplaceSmoothingAlpha() + "))) + (" + algebraicExpression.toString() + "))";
+            } else if (classification.isLaplaceSmoothed() && classification.isLaplaceSmoothedVariant() && !classification.isLogProductVariant()) {
+                formula.append("1 ");
+                algebraicExpression.append("1 ");
                 likelyhood[i] = ((1d * categoryCount + classification.getLaplaceSmoothingAlpha()) / (globalCount + globalCountCategories * classification.getLaplaceSmoothingAlpha())) * product;
                 formulae[i] = "((" + safeStr(pathCategory) + " + alpha) / (" + safeStr(pathGlobal) + " + (" + safeStr(pathGlobalCountCategories) + " * alpha))) * (" + formula.toString() + ")";
                 algebraicExpressions[i] = "((" + categoryCount + " + " + classification.getLaplaceSmoothingAlpha() + ") / (" + globalCount + " + (" + globalCountCategories + " * " + classification.getLaplaceSmoothingAlpha() + "))) * (" + algebraicExpression.toString() + ")";
+            } else if (classification.isLaplaceSmoothed() && !classification.isLaplaceSmoothedVariant() && classification.isLogProductVariant()) {
+                formula.append("0 ");
+                algebraicExpression.append("0 ");
+                likelyhood[i] = Math.exp( 0d + Math.log(categoryCount) - Math.log(globalCount) + product );
+                formulae[i] = "math.exp(math.log(" + safeStr(pathCategory) + ") - math.log(" + safeStr(pathGlobal)+") + (" + formula.toString() + "))";
+                algebraicExpressions[i] = "math.exp(math.log(" + categoryCount+ ") - math.log(" + globalCount + ") + (" + algebraicExpression.toString() + "))";
             } else {
+                formula.append("1 ");
+                algebraicExpression.append("1 ");
                 likelyhood[i] = 1d * categoryCount / globalCount * product;
                 formulae[i] = safeStr(pathCategory) + " / " + safeStr(pathGlobal) + " * (" + formula.toString() + ")";
                 algebraicExpressions[i] = categoryCount + " / " + globalCount + " * (" + algebraicExpression.toString() + ")";

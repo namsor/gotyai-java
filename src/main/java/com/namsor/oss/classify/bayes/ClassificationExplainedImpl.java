@@ -117,6 +117,9 @@ public class ClassificationExplainedImpl implements IClassificationExplained {
             sw.append("var alpha=" + getLaplaceSmoothingAlpha() + "\n");
             sw.append("\n// laplaced smoothing variant : " + isLaplaceSmoothedVariant() + "\n");
         }
+        if(isLogProductVariant()) {
+            sw.append("\n// log product variant : " + isLogProductVariant() + "\n");            
+        }
         if( features!=null) {
             sw.append("\n// Features : " + "\n");
             for (Map.Entry<String,String> feature : features.entrySet()) {
@@ -153,7 +156,7 @@ public class ClassificationExplainedImpl implements IClassificationExplained {
 
         sw.append("\n\n// return the highest probability estimate for evaluation " + "\n");
         sw.append("probabilityOf" + getClassProbabilities()[0].getCategory());
-        return sw.toString();        
+        return sw.toString().replace("math.log", "Math.log").replace("math.exp", "Math.exp");
     }
     
     
@@ -165,6 +168,10 @@ public class ClassificationExplainedImpl implements IClassificationExplained {
             sw.append("\n# laplaced smoothing alpha " + "\n");
             sw.append("alpha=" + getLaplaceSmoothingAlpha() + "\n");
             sw.append("\n# laplaced smoothing variant : " + isLaplaceSmoothedVariant() + "\n");
+        }
+        if(isLogProductVariant()) {
+            sw.append("\n# log product variant : " + isLogProductVariant() + "\n");            
+            sw.append("\nimport math\n");
         }
         if( features!=null) {
             sw.append("\n# Features : " + "\n");
@@ -213,7 +220,7 @@ public class ClassificationExplainedImpl implements IClassificationExplained {
 
         sw.append("\n\n# return the highest probability estimate for evaluation " + "\n");
         sw.append("probabilityOf" + getClassProbabilities()[0].getCategory());
-        return sw.toString();        
+        return sw.toString();
     }
         
 
