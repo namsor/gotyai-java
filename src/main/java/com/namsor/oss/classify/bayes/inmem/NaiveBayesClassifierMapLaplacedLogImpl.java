@@ -17,6 +17,7 @@ import java.util.Map.Entry;
  * @author elian carsenat, NamSor SAS
  */
 public class NaiveBayesClassifierMapLaplacedLogImpl extends NaiveBayesClassifierMapLaplacedImpl implements INaiveBayesClassifier {
+    protected static final long MIN_INFINITY = Long.MIN_VALUE;
 
 
     /**
@@ -89,7 +90,7 @@ public class NaiveBayesClassifierMapLaplacedLogImpl extends NaiveBayesClassifier
                     if (explainData) {
                         explanation.put(pathCategoryFeatureKeyValue, categoryFeatureValueCount);
                     }
-                    double basicLogProbability = (categoryFeatureCount == 0 ? 0 : 0d + Math.log(categoryFeatureValueCount + getAlpha()) - Math.log(categoryFeatureCount + featureCountValueTypes * getAlpha()));
+                    double basicLogProbability = (categoryFeatureCount == 0 ? MIN_INFINITY : 0d + Math.log(categoryFeatureValueCount + getAlpha()) - Math.log(categoryFeatureCount + featureCountValueTypes * getAlpha()));
                     logProduct += basicLogProbability;
                 }
             }

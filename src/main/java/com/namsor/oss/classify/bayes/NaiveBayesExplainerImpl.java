@@ -22,7 +22,7 @@ import java.util.logging.Logger;
  * @author elian
  */
 public class NaiveBayesExplainerImpl extends AbstractNaiveBayesImpl implements INaiveBayesExplainer {
-
+    protected static final long MIN_INFINITY = Long.MIN_VALUE;
     /**
      * Create an explainer
      */
@@ -75,9 +75,8 @@ public class NaiveBayesExplainerImpl extends AbstractNaiveBayesImpl implements I
                     if (classification.isLaplaceSmoothed() && classification.isLogProductVariant()) {
                         double basicProbability = (categoryFeatureCount == 0 ? 0 : 0d + Math.log(categoryFeatureValueCount + classification.getLaplaceSmoothingAlpha()) - Math.log(categoryFeatureCount + featureCountValueTypes * classification.getLaplaceSmoothingAlpha()));
                         if (categoryFeatureCount == 0) {
-                            formula.append(safeStr(pathCategoryFeatureKey));
-                            // intuition : this is the bug
-                            algebraicExpression.append("0");
+                            formula.append("min_infinity");
+                            algebraicExpression.append(""+MIN_INFINITY);
                         } else {
                             formula.append("math.log(" + safeStr( pathCategoryFeatureKeyValue ) + " + alpha)-math.log(" + safeStr( pathCategoryFeatureKey ) + " + ( " + safeStr( pathFeatureKeyCountValueTypes ) + " * alpha ))");
                             algebraicExpression.append("math.log(" + categoryFeatureValueCount + " + " + classification.getLaplaceSmoothingAlpha() + " )-math.log(" + categoryFeatureCount + " + ( " + featureCountValueTypes + " * " + classification.getLaplaceSmoothingAlpha() + " ))");

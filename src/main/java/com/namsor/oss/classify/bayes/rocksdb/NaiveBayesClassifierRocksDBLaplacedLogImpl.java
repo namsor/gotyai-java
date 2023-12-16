@@ -19,7 +19,8 @@ import java.util.Map;
  * @author elian carsenat, NamSor SAS
  */
 public class NaiveBayesClassifierRocksDBLaplacedLogImpl extends NaiveBayesClassifierRocksDBLaplacedImpl implements INaiveBayesClassifier {
-
+    protected static final long MIN_INFINITY = Long.MIN_VALUE;
+    
     public NaiveBayesClassifierRocksDBLaplacedLogImpl(String classifierName, String[] categories, String rootPathWritable, double alpha, boolean variant) throws PersistentClassifierException {
         super(classifierName, categories, rootPathWritable, alpha, variant);
     }
@@ -79,7 +80,7 @@ public class NaiveBayesClassifierRocksDBLaplacedLogImpl extends NaiveBayesClassi
                         if (explainData) {
                             explanation.put(pathCategoryFeatureKeyValue, categoryFeatureValueCount);
                         }
-                        double basicLogProbability = (categoryFeatureCount == 0 ? 0 : 0d + Math.log(categoryFeatureValueCount + getAlpha()) - Math.log(categoryFeatureCount + featureCountValueTypes * getAlpha()));
+                        double basicLogProbability = (categoryFeatureCount == 0 ? MIN_INFINITY : 0d + Math.log(categoryFeatureValueCount + getAlpha()) - Math.log(categoryFeatureCount + featureCountValueTypes * getAlpha()));
                         logProduct += basicLogProbability;
                     }
                 }

@@ -20,7 +20,8 @@ public class ClassificationExplainedImpl implements IClassificationExplained {
         Map.Entry<String, Long> e2 = (Map.Entry<String, Long>) o2;
         return e1.getKey().compareTo(e2.getKey());
     };
-
+    protected static final long MIN_INFINITY = Long.MIN_VALUE;
+    
     private final IClassification classification;
     private final double[] likelyhoods;
     private final String[] likelyhoodFormulae;
@@ -119,6 +120,7 @@ public class ClassificationExplainedImpl implements IClassificationExplained {
         }
         if(isLogProductVariant()) {
             sw.append("\n// log product variant : " + isLogProductVariant() + "\n");            
+            sw.append("var min_infinity=" + MIN_INFINITY + "\n");
         }
         if( features!=null) {
             sw.append("\n// Features : " + "\n");
@@ -172,6 +174,7 @@ public class ClassificationExplainedImpl implements IClassificationExplained {
         if(isLogProductVariant()) {
             sw.append("\n# log product variant : " + isLogProductVariant() + "\n");            
             sw.append("\nimport math\n");
+            sw.append("min_infinity=" + MIN_INFINITY + "\n");
         }
         if( features!=null) {
             sw.append("\n# Features : " + "\n");
@@ -199,13 +202,25 @@ public class ClassificationExplainedImpl implements IClassificationExplained {
             if( i==0 && getClassProbabilities().length>=2) {
                 sw.append("# basicProbabilities (compared to best alternative) : \n");
                 for (int j = 0; j < getFeatureNameAndValues()[i].length; j++) {
-                    Double f = (getBasicProbabilities()[i+1][j]>0 ? getBasicProbabilities()[i][j] / getBasicProbabilities()[i+1][j]:Double.NaN);
-                    sw.append("# p "+getFeatureNameAndValues()[i][j]+" : "+df.format(getBasicProbabilities()[i][j])+" vs "+df.format(getBasicProbabilities()[i+1][j])+" factor="+df.format(f)+"\n");
+                    double p1;
+                    double p2;
+                    double f;
+                    if( isLogProductVariant() ) { 
+                        p2 = Math.exp(getBasicProbabilities()[i+1][j]);
+                        p1 = Math.exp(getBasicProbabilities()[i][j]);
+                        f = (p2>0?p1/p2:Double.NaN);
+                    } else { 
+                        p2 = getBasicProbabilities()[i+1][j];
+                        p1 = getBasicProbabilities()[i][j];
+                        f = (p2>0?p1/p2:Double.NaN);                        
+                    }
+                    sw.append("# p "+getFeatureNameAndValues()[i][j]+" : "+df.format(p1)+" vs "+df.format(p2)+" factor="+df.format(f)+"\n");
                 }                
             }
             sw.append("# basicProbabilities : \n");
             for (int j = 0; j < getFeatureNameAndValues()[i].length; j++) {
-                sw.append("# p "+getFeatureNameAndValues()[i][j]+" : "+getBasicProbabilities()[i][j]+"\n");
+                double p = (isLogProductVariant()?Math.exp(getBasicProbabilities()[i][j]):getBasicProbabilities()[i][j]);
+                sw.append("# p "+getFeatureNameAndValues()[i][j]+" : "+p+"\n");
             }
             swLikelyhoodTot.append("likelyhoodOf" + getClassProbabilities()[i].getCategory() + "+");
         }
