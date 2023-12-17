@@ -11,6 +11,7 @@ import org.rocksdb.RocksDBException;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * Naive Bayes Classifier with Laplace smoothing and implementation with RocksDB/Speedb
@@ -20,13 +21,23 @@ import java.util.Map;
  */
 public class NaiveBayesClassifierRocksDBLaplacedLogImpl extends NaiveBayesClassifierRocksDBLaplacedImpl implements INaiveBayesClassifier {
     protected static final long MIN_INFINITY = Long.MIN_VALUE;
+    /**
+     * The LaplacedLog implementation should use VARIANT=true, otherwise
+     * the Java implementation still works log(0)=-Infinity in Java
+     * but the Python explanations will fail as log(0)>> ValueError: math domain error
+     */
+    private static final boolean DEFAULT_VARIANT_LOGIMPL=true;
     
     public NaiveBayesClassifierRocksDBLaplacedLogImpl(String classifierName, String[] categories, String rootPathWritable, double alpha, boolean variant) throws PersistentClassifierException {
         super(classifierName, categories, rootPathWritable, alpha, variant);
+        if(!variant) {
+            Logger.getAnonymousLogger().warning("Created a NaiveBayesClassifierRocksDBLaplacedLogImpl with variant="+variant+", which explanations may result in Python log(0) math domain error");
+        }
+        
     }
 
     public NaiveBayesClassifierRocksDBLaplacedLogImpl(String classifierName, String[] categories, String rootPathWritable) throws PersistentClassifierException {
-        super(classifierName, categories, rootPathWritable);
+        super(classifierName, categories, rootPathWritable, ALPHA, DEFAULT_VARIANT_LOGIMPL);        
     }
 
     @Override

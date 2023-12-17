@@ -8,6 +8,7 @@ import com.namsor.oss.classify.bayes.inmem.NaiveBayesClassifierMapLaplacedImpl;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 /**
  * Naive Bayes Classifier with Laplace smoothing and implementation in memory with
@@ -18,6 +19,12 @@ import java.util.Map.Entry;
  */
 public class NaiveBayesClassifierMapLaplacedLogImpl extends NaiveBayesClassifierMapLaplacedImpl implements INaiveBayesClassifier {
     protected static final long MIN_INFINITY = Long.MIN_VALUE;
+    /**
+     * The LaplacedLog implementation should use VARIANT=true, otherwise
+     * the Java implementation still works log(0)=-Infinity in Java
+     * but the Python explanations will fail as log(0)>> ValueError: math domain error
+     */
+    private static final boolean DEFAULT_VARIANT_LOGIMPL=true;
 
 
     /**
@@ -27,7 +34,7 @@ public class NaiveBayesClassifierMapLaplacedLogImpl extends NaiveBayesClassifier
      * @param categories     The classification categories
      */
     public NaiveBayesClassifierMapLaplacedLogImpl(String classifierName, String[] categories) {
-        super(classifierName, categories, ALPHA, VARIANT);
+        super(classifierName, categories, ALPHA, DEFAULT_VARIANT_LOGIMPL);
     }
 
     /**
@@ -40,6 +47,9 @@ public class NaiveBayesClassifierMapLaplacedLogImpl extends NaiveBayesClassifier
      */
     public NaiveBayesClassifierMapLaplacedLogImpl(String classifierName, String[] categories, double alpha, boolean variant) {
         super(classifierName, categories, alpha, variant);
+        if(!variant) {
+            Logger.getAnonymousLogger().warning("Created a NaiveBayesClassifierMapLaplacedLogImpl with variant="+variant+", which explanations may result in Python log(0) math domain error");
+        }
     }
 
     @Override

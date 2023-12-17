@@ -249,7 +249,7 @@ public class NaiveBayesExplainerImplTest {
     @Test
     public void testLearnClassifyExplainLaplacedLogSample1() throws Exception {
         String[] cats = {YES, NO};
-        NaiveBayesClassifierMapLaplacedLogImpl bayes = new NaiveBayesClassifierMapLaplacedLogImpl("tennis", cats);
+        NaiveBayesClassifierMapLaplacedLogImpl bayes = new NaiveBayesClassifierMapLaplacedLogImpl("tennis", cats, 1d, false);
         for (int i = 0; i < data.length; i++) {
             Map<String, String> features = new HashMap();
             for (int j = 0; j < colName.length - 1; j++) {

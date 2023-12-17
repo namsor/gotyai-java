@@ -22,8 +22,8 @@ import java.util.Map;
  */
 public class NaiveBayesClassifierRocksDBLaplacedImpl extends AbstractNaiveBayesClassifierRocksDBImpl implements INaiveBayesClassifier {
 
-    private static final boolean VARIANT = false;
-    private static final double ALPHA = 1d;
+    protected static final boolean VARIANT = false;
+    protected static final double ALPHA = 1d;
     private final boolean variant;
     private final double alpha;
 
